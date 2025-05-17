@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reproductor de Videos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Subir y Ver Videos</h1>
+
+    <!-- Formulario para subir video -->
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required>
+        <button type="submit">Subir Video</button>
+    </form>
+
+    <!-- Mostrar mensajes -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <hr>
+
+    <!-- Reproductor para cada video -->
+    {% for video in videos %}
+        <h3>{{ video }}</h3>
+        <video width="640" controls>
+            <source src="{{ url_for('video', filename=video) }}" type="video/mp4">
+            Tu navegador no soporta el video.
+        </video>
+        <hr>
+    {% endfor %}
+</body>
+</html>
