@@ -1,39 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Reproductor de Videos</title>
+    <meta charset="UTF-8">
+    <title>Control por Gestos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Subir y Ver Videos</h1>
+    <h1>Reproductor Controlado por Gestos</h1>
 
-    <!-- Formulario para subir video -->
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="video" accept="video/*" required>
-        <button type="submit">Subir Video</button>
+    <form onsubmit="cargarVideo(); return false;">
+        <input type="text" id="videoURL" placeholder="Pega enlace de YouTube" required>
+        <button type="submit">Cargar Video</button>
     </form>
 
-    <!-- Mostrar mensajes -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <div id="player"></div>
 
-    <hr>
+    <div id="volumen-container">
+        <div id="volumen-label">Volumen: <span id="volumen-num">--</span>%</div>
+        <div id="volumen-barra">
+            <div id="volumen-fill"></div>
+        </div>
+    </div>
 
-    <!-- Reproductor para cada video -->
-    {% for video in videos %}
-        <h3>{{ video }}</h3>
-        <video width="640" controls>
-            <source src="{{ url_for('video', filename=video) }}" type="video/mp4">
-            Tu navegador no soporta el video.
-        </video>
-        <hr>
-    {% endfor %}
+    <div id="resultado-gesto">Esperando gestos...</div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+
+        function extraerID(url) {
+            const regExp = /(?:v=|\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(regExp);
+            return match ? match[1] : null;
+        }
+
+        function cargarVideo() {
+            const url = document.getElementById('videoURL').value;
+            const videoId = extraerID(url);
+            if (!videoId) {
+                alert("URL no válida");
+                return;
+            }
+
+            if (player) {
+                player.loadVideoById(videoId);
+            } else {
+                player = new YT.Player('player', {
+                    height: '500',
+                    width: '100%',
+                    videoId: videoId,
+                    playerVars: {
+                        controls: 0,
+                        modestbranding: 1,
+                        rel: 0,
+                        showinfo: 0
+                    },
+                    events: {
+                        'onReady': onPlayerReady
+                    }
+                });
+            }
+        }
+
+        function onPlayerReady(event) {
+            setTimeout(actualizarVolumen, 500);
+            setInterval(detectarGesto, 2000);
+        }
+
+        function detectarGesto() {
+            fetch('http://127.0.0.1:5000/get_gesto')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("resultado-gesto").innerText = "Gesto: " + data.gesto;
+                    ejecutarComando(data.gesto);
+                });
+        }
+
+        function ejecutarComando(gesto) {
+            if (!player) return;
+
+            switch (gesto) {
+                case 'play_pause':
+                    const estado = player.getPlayerState();
+                    if (estado === 1) {
+                        player.pauseVideo();
+                    } else {
+                        player.playVideo();
+                    }
+                    break;
+                case 'next':
+                    player.seekTo(player.getCurrentTime() + 10, true);
+                    break;
+                case 'prev':
+                    player.seekTo(Math.max(player.getCurrentTime() - 10, 0), true);
+                    break;
+                case 'vol_up':
+                    ajustarVolumen(+10);
+                    break;
+                case 'vol_down':
+                    ajustarVolumen(-10);
+                    break;
+            }
+        }
+
+        function ajustarVolumen(delta) {
+            const nuevoVolumen = Math.max(0, Math.min(100, player.getVolume() + delta));
+            player.setVolume(nuevoVolumen);
+            setTimeout(actualizarVolumen, 200);
+        }
+
+        function actualizarVolumen() {
+            const volumen = player.getVolume();
+            document.getElementById("volumen-num").innerText = volumen;
+            document.getElementById("volumen-fill").style.width = volumen + "%";
+        }
+    </script>
 </body>
 </html>

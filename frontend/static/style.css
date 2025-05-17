@@ -1,63 +1,100 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px auto;
-    max-width: 800px;
-    background-color: #f9f9f9;
-    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
     color: #333;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
 }
 
 h1 {
-    text-align: center;
-    color: #444;
+    font-size: 2.2em;
+    color: #2c3e50;
+    margin-bottom: 30px;
 }
 
 form {
-    margin-bottom: 30px;
-    text-align: center;
+    margin-bottom: 25px;
 }
 
-input[type="file"] {
-    margin-right: 10px;
+#videoURL {
+    width: 55%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#videoURL:focus {
+    border-color: #007BFF;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 12px 20px;
     background-color: #007BFF;
     border: none;
     color: white;
-    font-size: 14px;
-    border-radius: 4px;
+    font-size: 16px;
+    border-radius: 8px;
     cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-video {
-    display: block;
-    margin: 20px auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+#player {
+    margin: 0 auto;
+    max-width: 900px;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    background: #000;
 }
 
-hr {
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 40px 0;
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
+#volumen-container {
+    max-width: 600px;
+    margin: 20px auto 0;
     text-align: center;
 }
 
-li {
-    background-color: #dff0d8;
-    color: #3c763d;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: inline-block;
+#volumen-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+#volumen-barra {
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    height: 16px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+#volumen-fill {
+    height: 100%;
+    width: 0%;
+    background-color: #007BFF;
+    border-radius: 20px;
+    transition: width 0.3s ease-in-out;
+}
+
+#resultado-gesto {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 30px;
+    color: #007BFF;
 }
