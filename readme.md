@@ -7,8 +7,8 @@ cd "nombreAmbiente"
 
 3. Instalar una vm
 ```
-python -m venv venv
-```
+python -3.10 -m venv venv
+Se requiere la version 3.10 para poder usar Media Pipe.
 
 4. Activar la vm
 -Windows
@@ -23,7 +23,8 @@ source venv/bin/activate
 
 5. Instalar dependencias
 ```
-source venv/bin/activate
-```
 pip install -r requirements.txt
 ```
+
+6. Levantar el ambiente
+python app.py   

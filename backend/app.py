@@ -1,18 +1,12 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-from model import detectar_gesto
 from model_train import entrenar_modelo
-from flask import request
 from model import predecir_desde_cv2
-import cv2
 import numpy as np
+import cv2
 
 app = Flask(__name__)
 CORS(app)
-
-@app.route("/get_gesto")
-def get_gesto():
-    return jsonify({"gesto": detectar_gesto()})
 
 @app.route('/entrenar_modelo')
 def entrenar():
@@ -31,5 +25,5 @@ def predecir():
     resultado = predecir_desde_cv2(imagen)
     return jsonify(resultado)
 
-if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

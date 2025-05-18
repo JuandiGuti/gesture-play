@@ -8,16 +8,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import joblib
 
-# Configuraciones
-DATASET_PATH = "backend/asl_alphabet_train"
+DATASET_PATH = "asl_alphabet_train"
 LETRAS_USADAS = ["A", "B", "D", "P", "U"]
 MAX_IMGS_POR_CLASE = 300
-MODEL_OUT_PATH = "backend/modelo_svm.pkl"
-LABELS_OUT_PATH = "backend/labels.pkl"
+MODEL_OUT_PATH = "modelo_svm.pkl"
+LABELS_OUT_PATH = "labels.pkl"
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1)
-mp_drawing = mp.solutions.drawing_utils
 
 def extraer_landmarks(imagen):
     img_rgb = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
@@ -42,10 +40,8 @@ def cargar_datos():
         for img_nombre in imagenes:
             img_path = os.path.join(ruta_clase, img_nombre)
             imagen = cv2.imread(img_path)
-
             if imagen is None:
                 continue
-
             puntos = extraer_landmarks(imagen)
             if puntos:
                 X.append(puntos)
@@ -78,7 +74,3 @@ def entrenar_modelo():
     print(f"[INFO] Etiquetas guardadas en: {LABELS_OUT_PATH}")
 
     return "Entrenamiento finalizado"
-
-# Para usar desde Flask
-if __name__ == "__main__":
-    entrenar_modelo()
