@@ -24,6 +24,15 @@
 
     <div id="resultado-gesto">Esperando gestos...</div>
 
+    <h2>Reconocimiento en Vivo</h2>
+
+    <div id="camara-wrapper">
+        <video id="video" autoplay playsinline></video>
+        <img id="imagen-procesada" alt="Puntos detectados" />
+    </div>
+
+    <div id="prediccion-live">Detectando gesto...</div>
+
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
@@ -113,6 +122,59 @@
             const volumen = player.getVolume();
             document.getElementById("volumen-num").innerText = volumen;
             document.getElementById("volumen-fill").style.width = volumen + "%";
+        }
+
+        // CÁMARA EN VIVO Y DETECCIÓN
+
+        const video = document.getElementById("video");
+        const prediccionTexto = document.getElementById("prediccion-live");
+        const imagenProcesada = document.getElementById("imagen-procesada");
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("No se pudo acceder a la cámara", err);
+            });
+
+        setInterval(() => {
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataURL = canvas.toDataURL("image/jpeg");
+
+            fetch("http://localhost:5000/predecir", {
+                method: "POST",
+                body: convertirDataURLaFormData(dataURL)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    prediccionTexto.innerText = "⚠️ " + data.error;
+                } else {
+                    prediccionTexto.innerText = `✋ Letra: ${data.prediccion} (${Math.round(data.confianza * 100)}%)`;
+                    imagenProcesada.src = "data:image/jpeg;base64," + data.imagen_procesada;
+                }
+            })
+            .catch(err => console.error("Error al enviar imagen", err));
+        }, 2000);
+
+        function convertirDataURLaFormData(dataURL) {
+            const formData = new FormData();
+            const byteString = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            formData.append("imagen", blob, "frame.jpg");
+            return formData;
         }
     </script>
 </body>

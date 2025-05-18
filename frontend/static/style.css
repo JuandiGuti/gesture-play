@@ -98,3 +98,31 @@ iframe {
     margin-top: 30px;
     color: #007BFF;
 }
+
+#camara-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+#video {
+    border-radius: 12px;
+    width: 320px;
+    height: 240px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+#imagen-procesada {
+    width: 320px;
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+#prediccion-live {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #007BFF;
+}
