@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Control por Gestos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <h1>Reproductor Controlado por Gestos</h1>
+    
+    <div style="text-align: right; margin-top: 10px;">
+        <a href="{{ url_for('config') }}">
+            <button>Configuración</button>
+        </a>
+    </div>
+
 
     <form onsubmit="cargarVideo(); return false;">
         <input type="text" id="videoURL" placeholder="Pega enlace de YouTube" required>
@@ -73,43 +82,6 @@
 
         function onPlayerReady(event) {
             setTimeout(actualizarVolumen, 500);
-            setInterval(detectarGesto, 2000);
-        }
-
-        function detectarGesto() {
-            fetch('http://127.0.0.1:5000/get_gesto')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("resultado-gesto").innerText = "Gesto: " + data.gesto;
-                    ejecutarComando(data.gesto);
-                });
-        }
-
-        function ejecutarComando(gesto) {
-            if (!player) return;
-
-            switch (gesto) {
-                case 'play_pause':
-                    const estado = player.getPlayerState();
-                    if (estado === 1) {
-                        player.pauseVideo();
-                    } else {
-                        player.playVideo();
-                    }
-                    break;
-                case 'next':
-                    player.seekTo(player.getCurrentTime() + 10, true);
-                    break;
-                case 'prev':
-                    player.seekTo(Math.max(player.getCurrentTime() - 10, 0), true);
-                    break;
-                case 'vol_up':
-                    ajustarVolumen(+10);
-                    break;
-                case 'vol_down':
-                    ajustarVolumen(-10);
-                    break;
-            }
         }
 
         function ajustarVolumen(delta) {
@@ -123,8 +95,6 @@
             document.getElementById("volumen-num").innerText = volumen;
             document.getElementById("volumen-fill").style.width = volumen + "%";
         }
-
-        // CÁMARA EN VIVO Y DETECCIÓN
 
         const video = document.getElementById("video");
         const prediccionTexto = document.getElementById("prediccion-live");
@@ -151,16 +121,41 @@
                 method: "POST",
                 body: convertirDataURLaFormData(dataURL)
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    prediccionTexto.innerText = "⚠️ " + data.error;
-                } else {
-                    prediccionTexto.innerText = `✋ Letra: ${data.prediccion} (${Math.round(data.confianza * 100)}%)`;
-                    imagenProcesada.src = "data:image/jpeg;base64," + data.imagen_procesada;
-                }
-            })
-            .catch(err => console.error("Error al enviar imagen", err));
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        prediccionTexto.innerText = "⚠️ " + data.error;
+                    } else {
+                        prediccionTexto.innerText = `✋ Letra: ${data.prediccion} (${Math.round(data.confianza * 100)}%)`;
+                        imagenProcesada.src = "data:image/jpeg;base64," + data.imagen_procesada;
+
+                        switch (data.prediccion) {
+                            case 'A':
+                                const estado = player.getPlayerState();
+                                if (estado === 1) {
+                                    player.pauseVideo();
+                                } else if (estado === 2) {
+                                    player.playVideo();
+                                }
+                                break;
+                            case 'B':
+                                ajustarVolumen(+10);
+                                break;
+                            case 'D':
+                                ajustarVolumen(-10);
+                                break;
+                            case 'P':
+                                player.seekTo(Math.max(player.getCurrentTime() - 10, 0), true);
+                                break;
+                            case 'U':
+                                player.seekTo(player.getCurrentTime() + 10, true);
+                                break;
+                            default:
+                                console.log("Gesto no mapeado:", data.prediccion);
+                        }
+                    }
+                })
+                .catch(err => console.error("Error al enviar imagen", err));
         }, 2000);
 
         function convertirDataURLaFormData(dataURL) {
@@ -178,4 +173,5 @@
         }
     </script>
 </body>
+
 </html>

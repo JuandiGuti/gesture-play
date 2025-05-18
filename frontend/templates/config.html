@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Configuración del Sistema</h1>
+
+    <div class="config-opciones">
+        <button id="btn-entrenar">Entrenar Modelo</button>
+        <p id="mensaje-entrenamiento"></p>
+    </div>
+
+    <script>
+        document.getElementById("btn-entrenar").addEventListener("click", () => {
+            fetch("http://localhost:5000/entrenar_modelo")
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("mensaje-entrenamiento").innerText = data.mensaje || "Entrenamiento completado";
+                })
+                .catch(err => {
+                    document.getElementById("mensaje-entrenamiento").innerText = "Error al entrenar el modelo";
+                    console.error(err);
+                });
+        });
+    </script>
+</body>
+</html>
