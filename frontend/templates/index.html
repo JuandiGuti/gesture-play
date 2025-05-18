@@ -3,175 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Control por Gestos</title>
+    <title>Gesture-Play</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <h1>Reproductor Controlado por Gestos</h1>
-    
-    <div style="text-align: right; margin-top: 10px;">
-        <a href="{{ url_for('config') }}">
-            <button>Configuración</button>
-        </a>
+    <header>
+        <h1>GESTURE-PLAY</h1>
+        <a href="/config"><button>Configuración</button></a>
+    </header>
+
+    <div class="url-input">
+        <form onsubmit="cargarVideo(); return false;">
+            <input type="text" id="videoURL" placeholder="Pega enlace de YouTube" required>
+            <button type="submit" class="submit">Cargar Video</button>
+        </form>
     </div>
 
+    <div class="main-container">
+        <div class="left-panel">
+            <div id="player"></div>
+            <div id="volumen-container">
+                <p>Volumen: <span id="volumen-num">--</span>%</p>
+                <div class="barra-volumen">
+                    <div id="volumen-fill"></div>
+                </div>
+            </div>
+        </div>
 
-    <form onsubmit="cargarVideo(); return false;">
-        <input type="text" id="videoURL" placeholder="Pega enlace de YouTube" required>
-        <button type="submit">Cargar Video</button>
-    </form>
-
-    <div id="player"></div>
-
-    <div id="volumen-container">
-        <div id="volumen-label">Volumen: <span id="volumen-num">--</span>%</div>
-        <div id="volumen-barra">
-            <div id="volumen-fill"></div>
+        <div class="right-panel">
+            <video id="video" autoplay playsinline></video>
+            <img id="imagen-procesada" alt="Procesado">
+            <div id="prediccion-live">Detectando gesto...</div>
         </div>
     </div>
 
-    <div id="resultado-gesto">Esperando gestos...</div>
-
-    <h2>Reconocimiento en Vivo</h2>
-
-    <div id="camara-wrapper">
-        <video id="video" autoplay playsinline></video>
-        <img id="imagen-procesada" alt="Puntos detectados" />
-    </div>
-
-    <div id="prediccion-live">Detectando gesto...</div>
-
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script>
-        let player;
-
-        function extraerID(url) {
-            const regExp = /(?:v=|\.be\/)([a-zA-Z0-9_-]{11})/;
-            const match = url.match(regExp);
-            return match ? match[1] : null;
-        }
-
-        function cargarVideo() {
-            const url = document.getElementById('videoURL').value;
-            const videoId = extraerID(url);
-            if (!videoId) {
-                alert("URL no válida");
-                return;
-            }
-
-            if (player) {
-                player.loadVideoById(videoId);
-            } else {
-                player = new YT.Player('player', {
-                    height: '500',
-                    width: '100%',
-                    videoId: videoId,
-                    playerVars: {
-                        controls: 0,
-                        modestbranding: 1,
-                        rel: 0,
-                        showinfo: 0
-                    },
-                    events: {
-                        'onReady': onPlayerReady
-                    }
-                });
-            }
-        }
-
-        function onPlayerReady(event) {
-            setTimeout(actualizarVolumen, 500);
-        }
-
-        function ajustarVolumen(delta) {
-            const nuevoVolumen = Math.max(0, Math.min(100, player.getVolume() + delta));
-            player.setVolume(nuevoVolumen);
-            setTimeout(actualizarVolumen, 200);
-        }
-
-        function actualizarVolumen() {
-            const volumen = player.getVolume();
-            document.getElementById("volumen-num").innerText = volumen;
-            document.getElementById("volumen-fill").style.width = volumen + "%";
-        }
-
-        const video = document.getElementById("video");
-        const prediccionTexto = document.getElementById("prediccion-live");
-        const imagenProcesada = document.getElementById("imagen-procesada");
-
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("No se pudo acceder a la cámara", err);
-            });
-
-        setInterval(() => {
-            const canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const dataURL = canvas.toDataURL("image/jpeg");
-
-            fetch("http://localhost:5000/predecir", {
-                method: "POST",
-                body: convertirDataURLaFormData(dataURL)
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        prediccionTexto.innerText = "⚠️ " + data.error;
-                    } else {
-                        prediccionTexto.innerText = `✋ Letra: ${data.prediccion} (${Math.round(data.confianza * 100)}%)`;
-                        imagenProcesada.src = "data:image/jpeg;base64," + data.imagen_procesada;
-
-                        switch (data.prediccion) {
-                            case 'A':
-                                const estado = player.getPlayerState();
-                                if (estado === 1) {
-                                    player.pauseVideo();
-                                } else if (estado === 2) {
-                                    player.playVideo();
-                                }
-                                break;
-                            case 'B':
-                                ajustarVolumen(+10);
-                                break;
-                            case 'D':
-                                ajustarVolumen(-10);
-                                break;
-                            case 'P':
-                                player.seekTo(Math.max(player.getCurrentTime() - 10, 0), true);
-                                break;
-                            case 'U':
-                                player.seekTo(player.getCurrentTime() + 10, true);
-                                break;
-                            default:
-                                console.log("Gesto no mapeado:", data.prediccion);
-                        }
-                    }
-                })
-                .catch(err => console.error("Error al enviar imagen", err));
-        }, 2000);
-
-        function convertirDataURLaFormData(dataURL) {
-            const formData = new FormData();
-            const byteString = atob(dataURL.split(',')[1]);
-            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            const blob = new Blob([ab], { type: mimeString });
-            formData.append("imagen", blob, "frame.jpg");
-            return formData;
-        }
-    </script>
+    <script src="{{ url_for('static', filename='src/main.js') }}"></script>
 </body>
 
 </html>
