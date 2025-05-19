@@ -5,6 +5,7 @@ import mediapipe as mp
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
+import shutil
 
 from sklearn.svm import SVC
 from sklearn.preprocessing import LabelEncoder
@@ -109,7 +110,6 @@ def evaluar_kfold(k=5):
     plt.tight_layout()
     plt.savefig("conf_matrix_avg.png")
 
-    # Métricas por clase
     metricas_prom = metricas_por_clase / k
     etiquetas = le.classes_
     plt.figure(figsize=(10, 6))
@@ -124,7 +124,14 @@ def evaluar_kfold(k=5):
     plt.legend()
     plt.tight_layout()
     plt.savefig("metricas_clases.png")
-    print("[INFO] Resultados guardados como resultados_kfold.json, conf_matrix_avg.png y metricas_clases.png")
+
+    frontend_static = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'static'))
+
+    os.makedirs(frontend_static, exist_ok=True)
+    shutil.move("conf_matrix_avg.png", os.path.join(frontend_static, "conf_matrix_avg.png"))
+    shutil.move("metricas_clases.png", os.path.join(frontend_static, "metricas_clases.png"))
+
+    print("[INFO] Resultados guardados y movidos a la carpeta static")
 
 
 if __name__ == "__main__":
