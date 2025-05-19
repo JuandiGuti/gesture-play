@@ -13,11 +13,18 @@
     <div class="config-panel">
         <button id="btn-entrenar">Entrenar Modelo</button>
         <p id="mensaje-entrenamiento"></p>
+        <button onclick="
+    const estadoActual = localStorage.getItem('modoReproductorSolo') === 'true';
+    localStorage.setItem('modoReproductorSolo', estadoActual ? 'false' : 'true');
+    alert(estadoActual ? 'Modo normal activado. Recarga la página principal.' : 'Modo solo reproductor activado. Recarga la página principal.');
+">
+            Alternar Modo Reproductor
+        </button>
     </div>
 
     <div class="config-topbar">
-    <a href="/"><button>Inicio</button></a>
-</div>
+        <a href="/"><button>Inicio</button></a>
+    </div>
 
 
     <div class="gestos-explicacion">

@@ -132,3 +132,16 @@ function convertirDataURLaFormData(dataURL) {
     formData.append("imagen", blob, "frame.jpg");
     return formData;
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("modoReproductorSolo") === "true") {
+        const rightPanel = document.querySelector(".right-panel");
+        if (rightPanel) {
+            rightPanel.style.display = "none";
+        }
+        const leftPanel = document.querySelector(".left-panel");
+        if (leftPanel) {
+            leftPanel.style.flex = "1";
+        }
+    }
+});
