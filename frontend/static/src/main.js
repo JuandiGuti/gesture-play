@@ -87,7 +87,7 @@ setInterval(() => {
 
                 if (porcentaje >= 70) {
                     switch (data.prediccion) {
-                        case 'A':
+                        case 'P':
                             const estado = player.getPlayerState();
                             if (estado === 1) {
                                 player.pauseVideo();
@@ -95,16 +95,16 @@ setInterval(() => {
                                 player.playVideo();
                             }
                             break;
-                        case 'B':
+                        case 'U':
                             ajustarVolumen(+10);
                             break;
                         case 'D':
                             ajustarVolumen(-10);
                             break;
-                        case 'P':
+                        case 'B':
                             player.seekTo(Math.max(player.getCurrentTime() - 10, 0), true);
                             break;
-                        case 'U':
+                        case 'A':
                             player.seekTo(player.getCurrentTime() + 10, true);
                             break;
                         default:
@@ -117,7 +117,7 @@ setInterval(() => {
 
         })
         .catch(err => console.error("Error al enviar imagen", err));
-}, 2000);
+}, 1000);
 
 function convertirDataURLaFormData(dataURL) {
     const formData = new FormData();

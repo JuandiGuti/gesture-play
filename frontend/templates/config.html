@@ -1,17 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Configuración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <h1>Configuración del Sistema</h1>
 
-    <div class="config-opciones">
+<body class="config-body">
+    <h1>Configuración del Sistema</h1>
+    <div class="config-panel">
         <button id="btn-entrenar">Entrenar Modelo</button>
         <p id="mensaje-entrenamiento"></p>
     </div>
+
+    <div class="config-topbar">
+    <a href="/"><button>Inicio</button></a>
+</div>
+
+
+    <div class="gestos-explicacion">
+        <h2>Gestos Disponibles</h2>
+        <ul>
+            <li><strong>P</strong> – Pausar / Reproducir video</li>
+            <li><strong>U</strong> – Subir volumen</li>
+            <li><strong>D</strong> – Bajar volumen</li>
+            <li><strong>B</strong> – Retroceder 10 segundos</li>
+            <li><strong>A</strong> – Avanzar 10 segundos</li>
+        </ul>
+    </div>
+
 
     <script>
         document.getElementById("btn-entrenar").addEventListener("click", () => {
@@ -27,4 +46,5 @@
         });
     </script>
 </body>
+
 </html>

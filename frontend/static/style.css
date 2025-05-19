@@ -7,27 +7,74 @@ body {
     padding: 0;
 }
 
-header {
+.config-body {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding: 20px;
-    background-color: #2a2a40;
+    justify-content: center;
+    height: 100vh;
+    background-color: #1e1e2f;
+    position: relative;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2em;
+.config-topbar {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+h1 {
     color: #00bfff;
+    margin-bottom: 30px;
 }
 
-header button {
-    padding: 10px 20px;
+.config-panel {
+    background-color: #2a2a40;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+    text-align: center;
+}
+
+button {
     background-color: #00bfff;
     border: none;
     border-radius: 8px;
+    padding: 12px 24px;
     color: white;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #008fd1;
+}
+
+#mensaje-entrenamiento {
+    margin-top: 20px;
+    color: #a0e6ff;
+    font-size: 14px;
+}
+
+.gestos-explicacion {
+    margin-top: 40px;
+    color: #a0e6ff;
+    text-align: left;
+}
+
+.gestos-explicacion h2 {
+    margin-bottom: 10px;
+    color: #00bfff;
+}
+
+.gestos-explicacion ul {
+    list-style: none;
+    padding: 0;
+}
+
+.gestos-explicacion li {
+    margin-bottom: 8px;
     font-size: 14px;
 }
 
