@@ -33,7 +33,7 @@ if not "%VER_OK%" == "3.10" (
 if not exist backend\venv (
     echo [INFO] Creando entorno virtual para BACKEND...
     python -m venv backend\venv
-    call backend\venv\Scripts\activate && pip install --upgrade pip && pip install -r backend\requirements.txt && call deactivate
+    call backend\venv\Scripts\activate && pip install -r backend\requirements.txt && call deactivate
 ) else (
     echo [INFO] Entorno virtual de BACKEND ya existe.
 )
@@ -42,7 +42,7 @@ if not exist backend\venv (
 if not exist frontend\venv (
     echo [INFO] Creando entorno virtual para FRONTEND...
     python -m venv frontend\venv
-    call frontend\venv\Scripts\activate && pip install --upgrade pip && pip install -r frontend\requirements.txt && call deactivate
+    call frontend\venv\Scripts\activate && pip install -r frontend\requirements.txt && call deactivate
 ) else (
     echo [INFO] Entorno virtual de FRONTEND ya existe.
 )

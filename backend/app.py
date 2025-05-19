@@ -5,6 +5,10 @@ from model import predecir_desde_cv2
 import numpy as np
 import cv2
 import threading
+import subprocess
+import os
+import json
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -27,6 +31,18 @@ def predecir():
 
     resultado = predecir_desde_cv2(imagen)
     return jsonify(resultado)
+
+@app.route('/evaluar_kfold')
+def evaluar_kfold():
+    try:
+        subprocess.run([sys.executable, "model_kfold_eval.py"], check=True)
+        resultado = {}
+        if os.path.exists("resultados_kfold.json"):
+            with open("resultados_kfold.json", "r") as f:
+                resultado = json.load(f)
+        return jsonify({"mensaje": "Evaluación completada", "resultados": resultado})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": "Fallo al ejecutar la evaluación"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

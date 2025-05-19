@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Configuración</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body class="config-body">
-    <h1>Configuración del Sistema</h1>
-    <div class="config-panel">
-        <button id="btn-entrenar">Entrenar Modelo</button>
-        <p id="mensaje-entrenamiento"></p>
-        <button onclick="
-    const estadoActual = localStorage.getItem('modoReproductorSolo') === 'true';
-    localStorage.setItem('modoReproductorSolo', estadoActual ? 'false' : 'true');
-    alert(estadoActual ? 'Modo normal activado. Recarga la página principal.' : 'Modo solo reproductor activado. Recarga la página principal.');
-">
-            Alternar Modo Reproductor
-        </button>
-    </div>
-
     <div class="config-topbar">
         <a href="/"><button>Inicio</button></a>
     </div>
+    <h1>Configuración del Sistema</h1>
 
+    <div class="config-layout">
+        <div class="panel-box">
+            <h2>Controles del Sistema</h2>
+            <button id="btn-entrenar">Entrenar Modelo</button>
+            <p id="mensaje-entrenamiento"></p>
+            <button onclick="toggleModoReproductor()">Alternar Modo Reproductor</button>
+            <p id="modo-status"></p>
+            <button id="btn-evaluar">Evaluar Modelo con K-Fold</button>
+            <p id="resultado-evaluacion"></p>
 
-    <div class="gestos-explicacion">
-        <h2>Gestos Disponibles</h2>
-        <ul>
-            <li><strong>P</strong> – Pausar / Reproducir video</li>
-            <li><strong>U</strong> – Subir volumen</li>
-            <li><strong>D</strong> – Bajar volumen</li>
-            <li><strong>B</strong> – Retroceder 10 segundos</li>
-            <li><strong>A</strong> – Avanzar 10 segundos</li>
-        </ul>
+            <h2>Gestos Disponibles</h2>
+            <ul>
+                <li><strong>P</strong> – Pausar / Reanudar video</li>
+                <li><strong>U</strong> – Subir volumen (Up)</li>
+                <li><strong>D</strong> – Bajar volumen (Down)</li>
+                <li><strong>B</strong> – Retroceder 10 segundos (Before)</li>
+                <li><strong>A</strong> – Avanzar 10 segundos (After)</li>
+            </ul>
+        </div>
+
+        <div class="panel-box">
+            <h2>Resultados de Evaluación</h2>
+            <div class="resultados-imagenes">
+                <img id="confusion-img" src="static/conf_matrix_avg.png" alt="Matriz de Confusión">
+                <img id="metricas-img" src="static/metricas_clases.png" alt="Métricas por Clase">
+            </div>
+        </div>
     </div>
-
 
     <script>
         document.getElementById("btn-entrenar").addEventListener("click", () => {
@@ -51,7 +53,28 @@
                     console.error(err);
                 });
         });
+
+        function toggleModoReproductor() {
+            const estadoActual = localStorage.getItem('modoReproductorSolo') === 'true';
+            localStorage.setItem('modoReproductorSolo', estadoActual ? 'false' : 'true');
+            document.getElementById("modo-status").innerText = estadoActual ? 'Modo normal activado' : 'Modo solo reproductor activado';
+        }
+
+        document.getElementById("btn-evaluar").addEventListener("click", () => {
+            fetch("http://localhost:5000/evaluar_kfold")
+                .then(res => res.json())
+                .then(data => {
+                    const res = data.resultados || {};
+                    document.getElementById("resultado-evaluacion").innerText =
+                        `Precisión: ${res.precision}, Recall: ${res.recall}, F1-Score: ${res.f1_score}`;
+                    document.getElementById("confusion-img").src = "static/conf_matrix_avg.png";
+                    document.getElementById("metricas-img").src = "static/metricas_clases.png";
+                })
+                .catch(err => {
+                    document.getElementById("resultado-evaluacion").innerText = "Error al evaluar el modelo";
+                    console.error(err);
+                });
+        });
     </script>
 </body>
-
 </html>

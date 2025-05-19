@@ -5,3 +5,5 @@ numpy
 mediapipe
 scikit-learn
 joblib
+matplotlib
+seaborn
