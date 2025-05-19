@@ -73,6 +73,23 @@ python app.py
 http://localhost:8000
 ```
 
+## Dataset Utilizado
+
+Este proyecto utiliza el dataset **ASL Alphabet**, que contiene imágenes de manos representando cada letra del alfabeto en lenguaje de señas americano.
+
+🔗 Puedes descargar el dataset desde Kaggle:  
+[ASL Alphabet Dataset – Kaggle](https://www.kaggle.com/datasets/grassknoted/asl-alphabet)
+
+Una vez descargado, colócalo dentro del directorio `backend/` con el nombre exacto:
+
+backend/asl_alphabet_train/
+
+java
+Copiar
+Editar
+
+Asegúrate de mantener la estructura original de carpetas (una por letra) para que el entrenamiento funcione correctamente.
+
 ## Entrenamiento del Modelo
 
 Desde la pestaña "Configuración" en la interfaz web:
