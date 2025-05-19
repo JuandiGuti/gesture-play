@@ -1,63 +1,186 @@
+/* Estilos generales */
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px auto;
-    max-width: 800px;
-    background-color: #f9f9f9;
-    padding: 20px;
-    color: #333;
+    font-family: 'Orbitron', sans-serif;
+    background-color: #1e1e2f;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.config-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #1e1e2f;
+    position: relative;
+}
+
+.config-topbar {
+    position: absolute;
+    top: 20px;
+    right: 30px;
 }
 
 h1 {
-    text-align: center;
-    color: #444;
-}
-
-form {
+    color: #00bfff;
     margin-bottom: 30px;
-    text-align: center;
 }
 
-input[type="file"] {
-    margin-right: 10px;
+.config-panel {
+    background-color: #2a2a40;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+    text-align: center;
 }
 
 button {
-    padding: 8px 16px;
-    background-color: #007BFF;
+    background-color: #00bfff;
     border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
     color: white;
-    font-size: 14px;
-    border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #008fd1;
 }
 
-video {
-    display: block;
-    margin: 20px auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+#mensaje-entrenamiento {
+    margin-top: 20px;
+    color: #a0e6ff;
+    font-size: 14px;
 }
 
-hr {
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 40px 0;
+.gestos-explicacion {
+    margin-top: 40px;
+    color: #a0e6ff;
+    text-align: left;
 }
 
-ul {
+.gestos-explicacion h2 {
+    margin-bottom: 10px;
+    color: #00bfff;
+}
+
+.gestos-explicacion ul {
     list-style: none;
     padding: 0;
+}
+
+.gestos-explicacion li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.url-input {
+    padding: 15px;
+    text-align: center;
+    background-color: #282846;
+}
+
+#videoURL {
+    width: 60%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+}
+
+button.submit {
+    margin-left: 10px;
+    padding: 10px 16px;
+    background-color: #00bfff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.main-container {
+    display: flex;
+    height: calc(100vh - 160px);
+    padding: 20px;
+    gap: 20px;
+}
+
+.left-panel {
+    flex: 8;
+    background-color: #2a2a40;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.right-panel {
+    flex: 2;
+    background-color: #2a2a40;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#player {
+    width: 100%;
+    flex: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+    background: #000;
+}
+
+#volumen-container {
+    margin-top: 20px;
     text-align: center;
 }
 
-li {
-    background-color: #dff0d8;
-    color: #3c763d;
-    padding: 10px;
-    border-radius: 5px;
+#volumen-container p {
+    font-size: 18px;
+    font-weight: bold;
     margin-bottom: 10px;
-    display: inline-block;
+    color: #00bfff;
+}
+
+.barra-volumen {
+    background: #444;
+    height: 16px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+#volumen-fill {
+    height: 100%;
+    width: 0%;
+    background: #00bfff;
+    border-radius: 20px;
+    transition: width 0.3s ease-in-out;
+}
+
+#video {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,191,255,0.3);
+}
+
+#imagen-procesada {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+#prediccion-live {
+    font-weight: bold;
+    font-size: 18px;
+    color: #00bfff;
 }

@@ -1,39 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <title>Reproductor de Videos</title>
+    <meta charset="UTF-8">
+    <title>Gesture-Play</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <h1>GesturePlay - Reproductor IA</h1>
+    <header>
+        <h1>GESTURE-PLAY</h1>
+        <a class="config-topbar" href="/config"><button>Configuración</button></a>
+    </header>
 
-    <!-- Formulario para subir video -->
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="video" accept="video/*" required>
-        <button type="submit">Subir Video</button>
-    </form>
+    <div class="url-input">
+        <form onsubmit="cargarVideo(); return false;">
+            <input type="text" id="videoURL" placeholder="Pega enlace de YouTube" required>
+            <button type="submit" class="submit">Cargar Video</button>
+        </form>
+    </div>
 
-    <!-- Mostrar mensajes -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <div class="main-container">
+        <div class="left-panel">
+            <div id="player"></div>
+            <div id="volumen-container">
+                <p>Volumen: <span id="volumen-num">--</span>%</p>
+                <div class="barra-volumen">
+                    <div id="volumen-fill"></div>
+                </div>
+            </div>
+        </div>
 
-    <hr>
+        <div class="right-panel">
+            <video id="video" autoplay playsinline></video>
+            <img id="imagen-procesada" alt="Procesado">
+            <div id="prediccion-live">Detectando gesto...</div>
+        </div>
+    </div>
 
-    <!-- Reproductor para cada video -->
-    {% for video in videos %}
-        <h3>{{ video }}</h3>
-        <video width="640" controls>
-            <source src="{{ url_for('video', filename=video) }}" type="video/mp4">
-            Tu navegador no soporta el video.
-        </video>
-        <hr>
-    {% endfor %}
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="{{ url_for('static', filename='src/main.js') }}"></script>
 </body>
+
 </html>
