@@ -4,14 +4,17 @@ from model_train import entrenar_modelo
 from model import predecir_desde_cv2
 import numpy as np
 import cv2
+import threading
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/entrenar_modelo')
 def entrenar():
-    resultado = entrenar_modelo()
-    return jsonify({"mensaje": resultado})
+    def ejecutar_entrenamiento():
+        entrenar_modelo()
+    threading.Thread(target=ejecutar_entrenamiento).start()
+    return jsonify({"mensaje": "Entrenamiento iniciado en segundo plano"})
 
 @app.route('/predecir', methods=['POST'])
 def predecir():
