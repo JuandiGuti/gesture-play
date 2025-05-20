@@ -28,13 +28,7 @@ except Exception as e:
     print(f"[ERROR] Fallo al cargar el modelo: {e}")
 
 def procesar_imagen_opencv(imagen):
-    imagen = cv2.resize(imagen, (224, 224))
-    gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    mejorado = clahe.apply(gris)
-    imagen_final = cv2.cvtColor(mejorado, cv2.COLOR_GRAY2BGR)
-
-    img_rgb = cv2.cvtColor(imagen_final, cv2.COLOR_BGR2RGB)
+    img_rgb = cv2.cvtColor(imagen, cv2.COLOR_BGR2RGB)
     resultado = hands.process(img_rgb)
 
     if resultado.multi_hand_landmarks:
