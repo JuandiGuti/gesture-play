@@ -17,11 +17,18 @@ if %errorlevel% neq 0 (
 )
 
 :: Verificamos que sea Python 3.10
-for /f "tokens=2 delims= " %%A in ('python --version') do set PY_VER=%%A
-set VER_OK=%PY_VER:~0,4%
-if not "%VER_OK%" == "3.10" (
+set "FOUND="
+for /f "tokens=*" %%A in ('py -0') do (
+    echo %%A | findstr /C:"3.10" >nul
+    if not errorlevel 1 (
+        set "FOUND=1"
+    )
+)
+
+if not defined FOUND (
     echo.
-    echo [ERROR] Se requiere Python 3.10. Descárgalo desde:
+    echo [ERROR] Se requiere tener instalada alguna versión de Python 3.10
+    echo Descárgala desde:
     echo https://www.python.org/downloads/release/python-3100/
     echo.
     start https://www.python.org/downloads/release/python-3100/
@@ -32,7 +39,7 @@ if not "%VER_OK%" == "3.10" (
 :: Crear entorno virtual para backend si no existe
 if not exist backend\venv (
     echo [INFO] Creando entorno virtual para BACKEND...
-    python -m venv backend\venv
+    py -3.10 -m venv backend\venv
     call backend\venv\Scripts\activate && pip install -r backend\requirements.txt && call deactivate
 ) else (
     echo [INFO] Entorno virtual de BACKEND ya existe.
@@ -41,7 +48,7 @@ if not exist backend\venv (
 :: Crear entorno virtual para frontend si no existe
 if not exist frontend\venv (
     echo [INFO] Creando entorno virtual para FRONTEND...
-    python -m venv frontend\venv
+    py -3.10 -m venv frontend\venv
     call frontend\venv\Scripts\activate && pip install -r frontend\requirements.txt && call deactivate
 ) else (
     echo [INFO] Entorno virtual de FRONTEND ya existe.
